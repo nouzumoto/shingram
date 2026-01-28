@@ -4,6 +4,8 @@ A minimalist Python library for creating Telegram bots with zero hardcoding and 
 
 Shingram provides a lightweight wrapper for the Telegram Bot API, designed to be simple, powerful, and future-proof. The library automatically supports all Telegram API methods without requiring code updates when new methods are added.
 
+📖 **[Documentation](https://nouzumoto.github.io/shingram/)**
+
 ## Features
 
 - **Zero hardcoding**: All Telegram API methods work automatically without library updates
@@ -20,6 +22,10 @@ Shingram provides a lightweight wrapper for the Telegram Bot API, designed to be
 ```bash
 pip install shingram
 ```
+
+## Documentation
+
+Full documentation is available at: **[https://nouzumoto.github.io/shingram/](https://nouzumoto.github.io/shingram/)**
 
 ## Quick Start
 

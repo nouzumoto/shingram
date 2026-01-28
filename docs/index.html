@@ -383,7 +383,6 @@
         
         <main class="content">
             <h1>Shingram Documentation</h1>
-            <p style="font-size: 16px; color: #768390; margin-bottom: 32px;">Complete guide to using Shingram, the minimalist Telegram bot library.</p>
             
             <h2 id="introduction">Introduction</h2>
             <p>Shingram is a minimalist Python library for creating Telegram bots. It's designed to be:</p>
@@ -397,18 +396,12 @@
             <p>Shingram provides a clean, simple API that abstracts away the complexity of the Telegram Bot API while maintaining full access to all features through the raw data access pattern.</p>
             
             <h2 id="installation">Installation</h2>
-            <p>Install Shingram and its dependencies using pip:</p>
-            <pre><code>pip install httpx
-pip install -e .</code></pre>
-            
-            <p>Or install directly from the repository:</p>
-            <pre><code>git clone https://github.com/YOURUSERNAME/shingram.git
-cd shingram
-pip install -e .</code></pre>
+            <p>Install Shingram using pip:</p>
+            <pre><code>pip install shingram</code></pre>
             
             <div class="info">
                 <strong>Note</strong><br>
-                Shingram requires Python 3.7+ and httpx for HTTP requests. The library uses only standard library dependencies plus httpx, keeping it lightweight and easy to install.
+                Shingram requires Python 3.7+ and httpx for HTTP requests. The library uses only standard library dependencies plus httpx, keeping it lightweight and easy to install. All dependencies are automatically installed when you install shingram.
             </div>
             
             <h2 id="quick-start">Quick Start</h2>
@@ -1292,9 +1285,6 @@ def handle_message(event):
                 </ul>
             </div>
             
-            <p style="margin-top: 48px; text-align: center; color: #768390; font-size: 14px; font-style: italic;">
-                <strong style="color: #58a6ff;">Shingram makes bot development simple, without sacrificing power!</strong>
-            </p>
         </main>
     </div>
 </body>

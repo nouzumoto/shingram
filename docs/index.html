@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shingram Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.7;
+            color: #adbac7;
+            background: #0d1117;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+            display: flex;
+            gap: 32px;
+        }
+        
+        .sidebar {
+            width: 260px;
+            background: transparent;
+            padding: 0;
+            position: sticky;
+            top: 24px;
+            height: fit-content;
+            max-height: calc(100vh - 48px);
+            overflow-y: auto;
+        }
+        
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 3px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
+        
+        .sidebar h2 {
+            font-size: 13px;
+            margin-bottom: 16px;
+            color: #768390;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar ul li {
+            margin-bottom: 4px;
+        }
+        
+        .sidebar a {
+            color: #768390;
+            text-decoration: none;
+            display: block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+            font-size: 14px;
+        }
+        
+        .sidebar a:hover {
+            background: #1c2128;
+            color: #adbac7;
+        }
+        
+        .content {
+            flex: 1;
+            background: transparent;
+            padding: 0;
+        }
+        
+        h1 {
+            color: #f0f6fc;
+            font-size: 40px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+        
+        h2 {
+            color: #f0f6fc;
+            font-size: 28px;
+            margin-top: 48px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            line-height: 1.3;
+            padding-top: 24px;
+            border-top: 1px solid #21262d;
+        }
+        
+        h2:first-of-type {
+            border-top: none;
+            margin-top: 32px;
+            padding-top: 0;
+        }
+        
+        h3 {
+            color: #f0f6fc;
+            font-size: 24px;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        
+        h4 {
+            color: #f0f6fc;
+            font-size: 20px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        
+        p {
+            margin-bottom: 16px;
+            color: #adbac7;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        code {
+            background: rgba(110, 118, 129, 0.4);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+            font-size: 85%;
+            color: #f47067;
+        }
+        
+        pre {
+            background: #161b22;
+            color: #adbac7;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 24px 0;
+            font-size: 14px;
+            line-height: 1.45;
+            border: 1px solid #30363d;
+            font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+        }
+        
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 100%;
+        }
+        
+        .highlight {
+            background: #1c2128;
+            padding: 16px;
+            margin: 24px 0;
+            border-radius: 6px;
+            border-left: 3px solid #d29922;
+        }
+        
+        .info {
+            background: #1c2128;
+            padding: 16px;
+            margin: 24px 0;
+            border-radius: 6px;
+            border-left: 3px solid #58a6ff;
+        }
+        
+        .success {
+            background: #1c2128;
+            padding: 16px;
+            margin: 24px 0;
+            border-radius: 6px;
+            border-left: 3px solid #3fb950;
+        }
+        
+        .warning {
+            background: #1c2128;
+            padding: 16px;
+            margin: 24px 0;
+            border-radius: 6px;
+            border-left: 3px solid #f85149;
+        }
+        
+        .highlight strong,
+        .info strong,
+        .success strong,
+        .warning strong {
+            color: #f0f6fc;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .highlight p,
+        .info p,
+        .success p,
+        .warning p {
+            margin: 0;
+            color: #adbac7;
+            font-size: 14px;
+        }
+        
+        .highlight ul,
+        .info ul,
+        .success ul,
+        .warning ul {
+            margin: 8px 0 0 20px;
+            color: #adbac7;
+            font-size: 14px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            background: #161b22;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #30363d;
+        }
+        
+        table th, table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #21262d;
+        }
+        
+        table th {
+            background: #161b22;
+            color: #f0f6fc;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        table td {
+            color: #adbac7;
+            font-size: 14px;
+        }
+        
+        table tr:hover {
+            background: #1c2128;
+        }
+        
+        table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+            color: #adbac7;
+        }
+        
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        li code {
+            color: #79c0ff;
+        }
+        
+        a {
+            color: #58a6ff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        a:hover {
+            color: #79c0ff;
+            text-decoration: underline;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        
+        .badge-success {
+            background: #238636;
+            color: #ffffff;
+        }
+        
+        .badge-warning {
+            background: #9e6a03;
+            color: #ffffff;
+        }
+        
+        .badge-danger {
+            background: #da3633;
+            color: #ffffff;
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                padding: 16px;
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: relative;
+                max-height: none;
+            }
+            
+            h1 {
+                font-size: 32px;
+            }
+            
+            h2 {
+                font-size: 24px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 28px;
+            }
+            
+            h2 {
+                font-size: 22px;
+            }
+            
+            pre {
+                padding: 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <h2>Contents</h2>
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#quick-start">Quick Start</a></li>
+                <li><a href="#event-object">Event Object</a></li>
+                <li><a href="#using-event-fields">Using Event Fields</a></li>
+                <li><a href="#using-event-raw">Using event.raw</a></li>
+                <li><a href="#dynamic-methods">Dynamic Methods</a></li>
+                <li><a href="#event-handlers">Event Handlers</a></li>
+                <li><a href="#examples">Examples</a></li>
+                <li><a href="#markdown-support">Markdown Support</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+                <li><a href="#summary">Summary</a></li>
+            </ul>
+        </nav>
+        
+        <main class="content">
+            <h1>Shingram Documentation</h1>
+            <p style="font-size: 16px; color: #768390; margin-bottom: 32px;">Complete guide to using Shingram, the minimalist Telegram bot library.</p>
+            
+            <h2 id="introduction">Introduction</h2>
+            <p>Shingram is a minimalist Python library for creating Telegram bots. It's designed to be:</p>
+            <ul>
+                <li><strong style="color: #ffffff;">Simple</strong>: Easy to understand and use</li>
+                <li><strong style="color: #ffffff;">Powerful</strong>: Supports all Telegram features</li>
+                <li><strong style="color: #ffffff;">Future-proof</strong>: Works with new Telegram methods automatically</li>
+                <li><strong style="color: #ffffff;">Lightweight</strong>: ~300 lines of core code</li>
+            </ul>
+            
+            <p>Shingram provides a clean, simple API that abstracts away the complexity of the Telegram Bot API while maintaining full access to all features through the raw data access pattern.</p>
+            
+            <h2 id="installation">Installation</h2>
+            <p>Install Shingram and its dependencies using pip:</p>
+            <pre><code>pip install httpx
+pip install -e .</code></pre>
+            
+            <p>Or install directly from the repository:</p>
+            <pre><code>git clone https://github.com/YOURUSERNAME/shingram.git
+cd shingram
+pip install -e .</code></pre>
+            
+            <div class="info">
+                <strong>Note</strong><br>
+                Shingram requires Python 3.7+ and httpx for HTTP requests. The library uses only standard library dependencies plus httpx, keeping it lightweight and easy to install.
+            </div>
+            
+            <h2 id="quick-start">Quick Start</h2>
+            <p>Minimal example:</p>
+            <pre><code>from shingram import Bot
+
+bot = Bot("YOUR_BOT_TOKEN")
+
+@bot.on("command:start")
+def handle_start(event):
+    bot.send_message(chat_id=event.chat_id, text="Hey! I'm using shingram")
+
+bot.run()</code></pre>
+            
+            <p>Core concepts:</p>
+            <ol>
+                <li>Create a <code>Bot</code> instance with your token</li>
+                <li>Register an event handler using the <code>@bot.on()</code> decorator</li>
+                <li>Access event data through the <code>event</code> parameter</li>
+                <li>Call Telegram API methods using Python-style naming</li>
+                <li>Start the bot with <code>bot.run()</code></li>
+            </ol>
+            
+            <h2 id="event-object">Event Object Explained</h2>
+            
+            <h3>What is Event?</h3>
+            <p>The <code>Event</code> object is a normalized representation of any Telegram update. Instead of dealing with different structures for <code>message</code>, <code>callback_query</code>, <code>inline_query</code>, etc., you always receive the same simple <code>Event</code> format.</p>
+            
+            <p>Normalization enables consistent handlers across update types while maintaining full access to original Telegram data.</p>
+            
+            <h3>Event Structure</h3>
+            <p>The <code>Event</code> dataclass contains the following fields:</p>
+            <pre><code>@dataclass
+class Event:
+    # Required fields (always present)
+    type: str                    # Event type: "command", "message", "callback", etc.
+    name: str                    # Event name: "start" for commands, "" for others
+    chat_id: int                 # Chat ID (0 if not applicable)
+    user_id: int                 # User ID (0 if not applicable)
+    text: str                    # Message text or callback data
+    raw: dict                    # Complete raw JSON from Telegram API
+    
+    # Optional convenience fields (extracted for common use)
+    reply_to: Optional[int]      # ID of replied message
+    chat_type: Optional[str]     # "private", "group", "supergroup", "channel"
+    inline_query_id: Optional[str]    # For inline_query events
+    callback_query_id: Optional[str]  # For callback_query events
+    message_id: Optional[int]    # Message ID (when available)
+    username: Optional[str]      # User username (when available)
+    first_name: Optional[str]    # User first name (when available)
+    chat_title: Optional[str]    # Chat title (for groups/channels)</code></pre>
+            
+            <div class="info">
+                <strong>Why Event is Simple</strong><br>
+                Event has only <strong>14 fields</strong> (6 required + 8 optional), while Telegram's JSON can have <strong>hundreds of fields</strong>. Event extracts only the <strong>most commonly used fields</strong> for convenience. Everything else is always available in <code>event.raw</code>.
+            </div>
+            
+            <div class="success">
+                <strong>You Never Lose Data</strong><br>
+                <code>event.raw</code> contains the complete Telegram update JSON. You can always access any field from the original Telegram API response, ensuring you never lose functionality or data.
+            </div>
+            
+            <h3>Event Fields Explained</h3>
+            
+            <h4>Required Fields</h4>
+            <ul>
+                <li><code>type</code>: The type of event ("command", "message", "callback", "inline_query", etc.)</li>
+                <li><code>name</code>: The specific name of the event. For commands, this is the command name without the "/" prefix. For other events, this is typically an empty string or a specific identifier.</li>
+                <li><code>chat_id</code>: The unique identifier of the chat where the event occurred. Set to 0 for events that don't have a chat context (like inline queries).</li>
+                <li><code>user_id</code>: The unique identifier of the user who triggered the event. Set to 0 for events without a user context.</li>
+                <li><code>text</code>: The text content of the event. For messages, this is the message text. For callback queries, this is the callback data. For inline queries, this is the query text.</li>
+                <li><code>raw</code>: The complete, unmodified JSON object from the Telegram Bot API. This contains all fields and nested structures from the original update.</li>
+            </ul>
+            
+            <h4>Optional Convenience Fields</h4>
+            <ul>
+                <li><code>reply_to</code>: The message ID that this event is replying to, if applicable.</li>
+                <li><code>chat_type</code>: The type of chat ("private", "group", "supergroup", or "channel"). Useful for filtering and conditional logic.</li>
+                <li><code>inline_query_id</code>: The unique identifier for inline query events, used when answering inline queries.</li>
+                <li><code>callback_query_id</code>: The unique identifier for callback query events, used when answering callback queries.</li>
+                <li><code>message_id</code>: The unique identifier of the message, when applicable.</li>
+                <li><code>username</code>: The username of the user who triggered the event, if available.</li>
+                <li><code>first_name</code>: The first name of the user who triggered the event, if available.</li>
+                <li><code>chat_title</code>: The title or name of the group or channel, if applicable.</li>
+            </ul>
+            
+            <h2 id="using-event-fields">Using Event Fields</h2>
+            
+            <h3>Basic Fields (Always Available)</h3>
+            <p>These fields are always present in every Event object, regardless of the update type:</p>
+            <pre><code>@bot.on("message")
+def handle_message(event):
+    # Always available
+    print(event.type)        # "message", "command", "callback", etc.
+    print(event.chat_id)    # Chat ID
+    print(event.user_id)     # User ID
+    print(event.text)        # Message text
+    print(event.raw)         # Complete JSON</code></pre>
+            
+            <h3>Convenience Fields (When Available)</h3>
+            <p>These fields are extracted from the raw data when available, making common operations easier:</p>
+            <pre><code>@bot.on("message")
+def handle_message(event):
+    # Filter by chat type (very common)
+    if event.chat_type == "private":
+        bot.send_message(
+            chat_id=event.chat_id,
+            text=f"Hello {event.first_name}! This is a private chat."
+        )
+    elif event.chat_type == "group":
+        bot.send_message(
+            chat_id=event.chat_id,
+            text=f"@{event.username} wrote in {event.chat_title}"
+        )
+    
+    # Check if it's a reply
+    if event.reply_to:
+        bot.send_message(
+            chat_id=event.chat_id,
+            text=f"You replied to message {event.reply_to}",
+            reply_to_message_id=event.message_id
+        )
+    
+    # Use username directly
+    if event.username:
+        print(f"Message from @{event.username}")</code></pre>
+            
+            <h3>Event Fields by Type</h3>
+            
+            <h4>Message Events</h4>
+            <p>For regular text messages, all convenience fields are typically available:</p>
+            <pre><code>@bot.on("message")
+def handle_message(event):
+    # Available fields:
+    event.type          # "message"
+    event.chat_id       # Chat ID
+    event.user_id       # User ID
+    event.text          # Message text
+    event.chat_type     # "private", "group", "supergroup", "channel"
+    event.username      # User username
+    event.first_name    # User first name
+    event.chat_title    # Group/channel title
+    event.message_id    # Message ID
+    event.reply_to      # Replied message ID (if reply)
+    event.raw           # Complete JSON</code></pre>
+            
+            <h4>Command Events</h4>
+            <p>Commands are a special type of message that start with "/". The <code>name</code> field contains the command name:</p>
+            <pre><code>@bot.on("command:start")
+def handle_start(event):
+    # Available fields:
+    event.type          # "command"
+    event.name          # "start" (command name without /)
+    event.chat_id       # Chat ID
+    event.user_id       # User ID
+    event.text          # "/start" (full command text)
+    event.chat_type     # Chat type
+    event.username      # User username
+    event.first_name    # User first name
+    event.message_id    # Message ID
+    event.raw           # Complete JSON</code></pre>
+            
+            <h4>Callback Query Events</h4>
+            <p>Callback queries are triggered when users click inline buttons. The <code>text</code> field contains the callback data:</p>
+            <pre><code>@bot.on("callback")
+def handle_callback(event):
+    # Available fields:
+    event.type              # "callback"
+    event.name              # First part of callback_data (if contains ":")
+    event.text              # Full callback_data
+    event.chat_id           # Chat ID
+    event.user_id           # User ID
+    event.callback_query_id # Callback query ID (for answering)
+    event.message_id        # Message ID (if callback from message)
+    event.chat_type         # Chat type
+    event.username          # User username
+    event.raw               # Complete JSON
+    
+    # Answer callback
+    bot.answer_callback_query(
+        callback_query_id=event.callback_query_id,
+        text="Done!"
+    )</code></pre>
+            
+            <h4>Inline Query Events</h4>
+            <p>Inline queries are triggered when users use your bot in inline mode. Note that inline queries don't have a <code>chat_id</code>:</p>
+            <pre><code>@bot.on("inline_query")
+def handle_inline(event):
+    # Available fields:
+    event.type              # "inline_query"
+    event.user_id           # User ID
+    event.text              # Query text
+    event.inline_query_id   # Inline query ID (for answering)
+    event.username          # User username
+    event.first_name        # User first name
+    event.raw               # Complete JSON
+    
+    # Answer inline query
+    bot.answer_inline_query(
+        inline_query_id=event.inline_query_id,
+        results=[...]
+    )</code></pre>
+            
+            <h2 id="using-event-raw">Using event.raw</h2>
+            
+            <h3>When to Use event.raw</h3>
+            <p>While Event provides convenient access to common fields, you should use <code>event.raw</code> when you need:</p>
+            <ul>
+                <li><strong>Advanced data</strong> not extracted by Event (entities, dates, media metadata)</li>
+                <li><strong>Complete structures</strong> (like the full <code>reply_to_message</code> object)</li>
+                <li><strong>Media information</strong> (photos, videos, documents, voice messages)</li>
+                <li><strong>Telegram-specific fields</strong> (update_id, forward information, etc.)</li>
+                <li><strong>Nested data</strong> that requires deep access into the JSON structure</li>
+            </ul>
+            
+            <div class="info">
+                <strong>Best Practice</strong><br>
+                Use Event fields for common operations, and <code>event.raw</code> for advanced use cases.
+            </div>
+            
+            <h3>Examples</h3>
+            
+            <h4>1. Accessing Message Entities</h4>
+            <p>Message entities provide information about formatting, mentions, links, and other special elements in the text:</p>
+            <pre><code>@bot.on("message")
+def handle_message(event):
+    # Entities (bold, italic, links, mentions, etc.)
+    entities = event.raw["message"].get("entities", [])
+    
+    for entity in entities:
+        if entity["type"] == "bold":
+            offset = entity["offset"]
+            length = entity["length"]
+            bold_text = event.text[offset:offset+length]
+            print(f"Bold text: {bold_text}")
+        elif entity["type"] == "mention":
+            offset = entity["offset"]
+            length = entity["length"]
+            mention = event.text[offset:offset+length]
+            print(f"Mentioned: {mention}")</code></pre>
+            
+            <h4>2. Getting Timestamp</h4>
+            <p>Access the exact timestamp when the message was sent:</p>
+            <pre><code>@bot.on("message")
+def handle_message(event):
+    # Date/timestamp (Unix timestamp)
+    date = event.raw["message"]["date"]
+    from datetime import datetime
+    message_time = datetime.fromtimestamp(date)
+    print(f"Message sent at: {message_time}")
+    
+    # Calculate time difference
+    now = datetime.now()
+    time_diff = now - message_time
+    print(f"Time since message: {time_diff}")</code></pre>
+            
+            <h4>3. Accessing Media</h4>
+            <p>Handle different types of media sent in messages:</p>
+            <pre><code>@bot.on("message")
+def handle_message(event):
+    message = event.raw["message"]
+    
+    # Photo (array of photo sizes, last is largest)
+    if "photo" in message:
+        photos = message["photo"]
+        largest_photo = photos[-1]  # Last is largest
+        file_id = largest_photo["file_id"]
+        file_size = largest_photo.get("file_size", 0)
+        print(f"Photo file_id: {file_id}, size: {file_size} bytes")
+    
+    # Document
+    if "document" in message:
+        doc = message["document"]
+        file_name = doc.get("file_name", "")
+        file_size = doc.get("file_size", 0)
+        mime_type = doc.get("mime_type", "")
+        file_id = doc.get("file_id", "")
+        print(f"Document: {file_name} ({file_size} bytes, {mime_type})")
+        print(f"File ID: {file_id}")
+    
+    # Voice message
+    if "voice" in message:
+        voice = message["voice"]
+        duration = voice.get("duration", 0)
+        file_id = voice.get("file_id", "")
+        file_size = voice.get("file_size", 0)
+        print(f"Voice message: {duration} seconds, {file_size} bytes")
+        print(f"File ID: {file_id}")
+    
+    # Video
+    if "video" in message:
+        video = message["video"]
+        duration = video.get("duration", 0)
+        width = video.get("width", 0)
+        height = video.get("height", 0)
+        file_id = video.get("file_id", "")
+        print(f"Video: {width}x{height}, {duration} seconds")</code></pre>
+            
+            <h4>4. Complete Reply Information</h4>
+            <p>Get full details about the message being replied to:</p>
+            <pre><code>@bot.on("message")
+def handle_message(event):
+    # event.reply_to gives only the ID
+    if event.reply_to:
+        # Get complete reply information from raw
+        reply_msg = event.raw["message"].get("reply_to_message", {})
+        original_text = reply_msg.get("text", "")
+        original_user = reply_msg.get("from", {}).get("username", "")
+        original_date = reply_msg.get("date", 0)
+        original_chat = reply_msg.get("chat", {}).get("title", "")
+        
+        print(f"Replied to: {original_text}")
+        print(f"From: @{original_user}")
+        print(f"In chat: {original_chat}")
+        print(f"Date: {datetime.fromtimestamp(original_date)}")
+        
+        # Check if original message has media
+        if "photo" in reply_msg:
+            print("Original message had a photo")
+        if "document" in reply_msg:
+            print("Original message had a document")</code></pre>
+            
+            <h4>5. Forward Information</h4>
+            <p>Detect and handle forwarded messages:</p>
+            <pre><code>@bot.on("message")
+def handle_message(event):
+    message = event.raw["message"]
+    
+    # Forwarded from user
+    if "forward_from" in message:
+        original_user = message["forward_from"]
+        user_id = original_user.get("id")
+        username = original_user.get("username", "")
+        first_name = original_user.get("first_name", "")
+        print(f"Forwarded from user: {first_name} (@{username}, ID: {user_id})")
+    
+    # Forwarded from channel
+    if "forward_from_chat" in message:
+        chat = message["forward_from_chat"]
+        chat_type = chat.get("type")
+        if chat_type == "channel":
+            channel_name = chat.get("title", "")
+            channel_id = chat.get("id")
+            channel_username = chat.get("username", "")
+            print(f"Forwarded from channel: {channel_name} (@{channel_username}, ID: {channel_id})")
+    
+    # Forward signature (for channels)
+    if "forward_signature" in message:
+        signature = message["forward_signature"]
+        print(f"Forward signature: {signature}")
+    
+    # Forward date
+    if "forward_date" in message:
+        forward_date = datetime.fromtimestamp(message["forward_date"])
+        print(f"Originally sent: {forward_date}")</code></pre>
+            
+            <h4>6. User Information</h4>
+            <p>Access detailed user information:</p>
+            <pre><code>@bot.on("message")
+def handle_message(event):
+    user_info = event.raw["message"]["from"]
+    
+    # Advanced user info
+    user_id = user_info.get("id")
+    is_bot = user_info.get("is_bot", False)
+    is_premium = user_info.get("is_premium", False)
+    language = user_info.get("language_code", "unknown")
+    last_name = user_info.get("last_name", "")
+    
+    print(f"User ID: {user_id}")
+    print(f"Is bot: {is_bot}")
+    print(f"Premium: {is_premium}")
+    print(f"Language: {language}")
+    print(f"Full name: {event.first_name} {last_name}")
+    
+    # Handle premium users differently
+        if is_premium:
+        bot.send_message(
+            chat_id=event.chat_id,
+            text="Hey! I'm using shingram"
+        )</code></pre>
+            
+            <h4>7. Update ID</h4>
+            <p>Access the update ID for tracking and deduplication:</p>
+            <pre><code>@bot.on("*")
+def handle_all(event):
+    # Update ID (not in Event, but in raw)
+    update_id = event.raw["update_id"]
+    print(f"Update ID: {update_id}")
+    
+    # Use for tracking processed updates
+    # Shingram handles this automatically</code></pre>
+            
+            <h2 id="dynamic-methods">Dynamic Methods</h2>
+            
+            <h3>How It Works</h3>
+            <p>Shingram uses Python's <code>__getattr__</code> to automatically convert <code>snake_case</code> method names to Telegram's <code>camelCase</code> API format.</p>
+            
+            <pre><code># You write (Python style):
+bot.send_message(chat_id=123, text="Hello")
+
+# Shingram automatically converts to:
+# POST https://api.telegram.org/bot&lt;token&gt;/sendMessage
+# With JSON: {"chat_id": 123, "text": "Hello"}</code></pre>
+            
+            <div class="success">
+                <strong>Zero Hardcoding</strong><br>
+                No Telegram API methods are hardcoded in Shingram. If Telegram adds a new method tomorrow, it works immediately without any code changes. This makes Shingram future-proof and eliminates the need for library updates when new methods are added.
+            </div>
+            
+            <h3>Examples</h3>
+            <p>All Telegram API methods work automatically with Python naming:</p>
+            <pre><code># All of these work automatically:
+bot.send_message(chat_id=123, text="Hey! I'm using shingram")
+bot.send_photo(chat_id=123, photo="https://example.com/image.jpg")
+bot.send_document(chat_id=123, document="file_id")
+bot.forward_message(chat_id=123, from_chat_id=456, message_id=789)
+bot.ban_chat_member(chat_id=123, user_id=456)
+bot.get_chat_member(chat_id=123, user_id=456)
+bot.answer_callback_query(callback_query_id="123", text="Hey! I'm using shingram")
+bot.answer_inline_query(inline_query_id="123", results=[])
+bot.edit_message_text(chat_id=123, message_id=456, text="Hey! I'm using shingram")
+bot.delete_message(chat_id=123, message_id=456)
+# ... any other Telegram API method!</code></pre>
+            
+            <h3>Conversion Table</h3>
+            <p>Common method name conversions:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Python (snake_case)</th>
+                        <th>Telegram API (camelCase)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>send_message</code></td>
+                        <td><code>sendMessage</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>get_updates</code></td>
+                        <td><code>getUpdates</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>ban_chat_member</code></td>
+                        <td><code>banChatMember</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>forward_message</code></td>
+                        <td><code>forwardMessage</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>get_chat_member</code></td>
+                        <td><code>getChatMember</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>edit_message_text</code></td>
+                        <td><code>editMessageText</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>answer_callback_query</code></td>
+                        <td><code>answerCallbackQuery</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>answer_inline_query</code></td>
+                        <td><code>answerInlineQuery</code></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h2 id="event-handlers">Event Handlers</h2>
+            
+            <h3>Handler Registration</h3>
+            <p>You can register event handlers in two ways:</p>
+            
+            <h4>Method 1: Decorator (Recommended)</h4>
+            <pre><code>@bot.on("command:start")
+def handle_start(event):
+    bot.send_message(chat_id=event.chat_id, text="Hey! I'm using shingram")</code></pre>
+            
+            <h4>Method 2: Direct Method</h4>
+            <pre><code>def handle_start(event):
+    bot.send_message(chat_id=event.chat_id, text="Hey! I'm using shingram")
+
+bot.on("command:start", handle_start)</code></pre>
+            
+            <h3>Handler Patterns</h3>
+            <p>Shingram supports flexible pattern matching for event handlers:</p>
+            <pre><code># Specific command (most specific)
+@bot.on("command:start")   # Only /start
+
+# All commands (less specific)
+@bot.on("command")         # All commands (/start, /help, /info, etc.)
+
+# All messages (even less specific)
+@bot.on("message")         # All text messages
+
+# Wildcard (catches everything, least specific)
+@bot.on("*")              # ALL events (messages, commands, callbacks, etc.)</code></pre>
+            
+            <h3>Handler Priority</h3>
+            <p>When multiple handlers could match an event, Shingram uses the following priority order:</p>
+            <ol>
+                <li><strong>Wildcard handler</strong> (<code>"*"</code>) runs first, if registered. Useful for logging or global processing.</li>
+                <li><strong>Specific handler</strong> (<code>"command:start"</code>) runs if the event name matches exactly.</li>
+                <li><strong>Type handler</strong> (<code>"command"</code>) runs as a fallback for all events of that type.</li>
+            </ol>
+            
+            <div class="info">
+                <strong>Handler Execution</strong><br>
+                Only one handler is executed per event. Once a specific handler matches, the type handler is not called. The wildcard handler always runs first (if present) but doesn't prevent other handlers from running.
+            </div>
+            
+            <h2 id="examples">Examples</h2>
+            
+            <h3>Example 1: Simple Echo Bot</h3>
+            <p>A basic bot that echoes back whatever the user sends:</p>
+            <pre><code>from shingram import Bot
+
+bot = Bot("YOUR_BOT_TOKEN")
+
+@bot.on("message")
+def echo(event):
+    if event.text:
+        bot.send_message(chat_id=event.chat_id, text="Hey! I'm using shingram")
+
+bot.run()</code></pre>
+            
+            <h3>Example 2: Private Chat vs Group Chat</h3>
+            <p>Different behavior based on chat type:</p>
+            <pre><code>from shingram import Bot
+
+bot = Bot("YOUR_BOT_TOKEN")
+
+@bot.on("command:hello")
+def hello(event):
+    # Different responses based on chat type
+    if event.chat_type == "private":
+        bot.send_message(
+            chat_id=event.chat_id,
+            text="Hey! I'm using shingram"
+        )
+    elif event.chat_type in ["group", "supergroup"]:
+        bot.send_message(
+            chat_id=event.chat_id,
+            text="Hey! I'm using shingram"
+        )
+
+bot.run()</code></pre>
+            
+            <h3>Example 3: Inline Bot</h3>
+            <p>Handle inline queries for inline mode:</p>
+            <pre><code>from shingram import Bot
+
+bot = Bot("YOUR_BOT_TOKEN")
+
+@bot.on("inline_query")
+def handle_inline(event):
+    query = event.text
+    
+    # Build results based on query
+    results = [
+        {
+            "type": "article",
+            "id": "1",
+            "title": f"Result for: {query}",
+            "description": f"Search result for '{query}'",
+            "input_message_content": {
+                "message_text": "Hey! I'm using shingram"
+            }
+        }
+    ]
+    
+    # Answer the inline query
+    bot.answer_inline_query(
+        inline_query_id=event.inline_query_id,
+        results=results
+    )
+
+bot.run()</code></pre>
+            
+            <h3>Example 4: Callback Buttons</h3>
+            <p>Create interactive buttons and handle button clicks:</p>
+            <pre><code>from shingram import Bot
+
+bot = Bot("YOUR_BOT_TOKEN")
+
+@bot.on("command:buttons")
+def show_buttons(event):
+    # Create inline keyboard
+    keyboard = {
+        "inline_keyboard": [
+            [
+                {"text": "Button 1", "callback_data": "btn1"},
+                {"text": "Button 2", "callback_data": "btn2"}
+            ],
+            [
+                {"text": "Button 3", "callback_data": "btn3"}
+            ]
+        ]
+    }
+    
+    bot.send_message(
+        chat_id=event.chat_id,
+        text="Hey! I'm using shingram",
+        reply_markup=keyboard
+    )
+
+@bot.on("callback")
+def handle_callback(event):
+    # Answer callback (required to stop loading indicator)
+    bot.answer_callback_query(
+        callback_query_id=event.callback_query_id,
+        text="Hey! I'm using shingram"
+    )
+    
+    # Handle button based on callback data
+    if event.text == "btn1":
+        bot.send_message(
+            chat_id=event.chat_id,
+            text="Hey! I'm using shingram"
+        )
+    elif event.text == "btn2":
+        bot.send_message(
+            chat_id=event.chat_id,
+            text="Hey! I'm using shingram"
+        )
+    elif event.text == "btn3":
+        bot.send_message(
+            chat_id=event.chat_id,
+            text="Hey! I'm using shingram"
+        )
+
+bot.run()</code></pre>
+            
+            <h3>Example 5: Using event.raw for Advanced Features</h3>
+            <p>Combine Event convenience fields with raw data access:</p>
+            <pre><code>from shingram import Bot
+from datetime import datetime
+
+bot = Bot("YOUR_BOT_TOKEN")
+
+@bot.on("message")
+def handle_message(event):
+    # Use convenience fields for common tasks
+    if event.chat_type == "private":
+        bot.send_message(
+            chat_id=event.chat_id,
+            text="Hey! I'm using shingram"
+        )
+    
+    # Use raw for advanced data
+    message = event.raw["message"]
+    
+    # Check for media
+    if "photo" in message:
+        photos = message["photo"]
+        file_id = photos[-1]["file_id"]
+        bot.send_message(
+            chat_id=event.chat_id,
+            text="Hey! I'm using shingram"
+        )
+    
+    # Get timestamp
+    date = message["date"]
+    msg_time = datetime.fromtimestamp(date)
+    
+    # Check entities (mentions, hashtags, etc.)
+    entities = message.get("entities", [])
+    for entity in entities:
+        if entity["type"] == "mention":
+            offset = entity["offset"]
+            length = entity["length"]
+            mention = event.text[offset:offset+length]
+            bot.send_message(
+                chat_id=event.chat_id,
+                text="Hey! I'm using shingram"
+            )
+
+bot.run()</code></pre>
+            
+            <h2 id="markdown-support">Markdown Support</h2>
+            
+            <div class="success">
+                <strong>Yes, Markdown is Supported!</strong><br>
+                Shingram supports all Telegram formatting options through the <code>parse_mode</code> parameter. You can use HTML, Markdown, or MarkdownV2 formatting.
+            </div>
+            
+            <h3>HTML Formatting</h3>
+            <p>HTML is the most flexible and widely supported format:</p>
+            <pre><code>bot.send_message(
+    chat_id=event.chat_id,
+    text="&lt;b&gt;Bold&lt;/b&gt; &lt;i&gt;Italic&lt;/i&gt; &lt;code&gt;Code&lt;/code&gt;",
+    parse_mode="HTML"
+)</code></pre>
+            
+            <h3>Markdown Formatting</h3>
+            <p>Classic Markdown syntax (simpler but less flexible):</p>
+            <pre><code>bot.send_message(
+    chat_id=event.chat_id,
+    text="*Bold* _Italic_ `Code`",
+    parse_mode="Markdown"
+)</code></pre>
+            
+            <h3>MarkdownV2 Formatting</h3>
+            <p>Enhanced Markdown with more features (requires escaping special characters):</p>
+            <pre><code>bot.send_message(
+    chat_id=event.chat_id,
+    text="*Bold* _Italic_ `Code`",
+    parse_mode="MarkdownV2"
+)</code></pre>
+            
+            <h3>HTML Example</h3>
+            <p>Complete HTML formatting example:</p>
+            <pre><code>@bot.on("command:format")
+def format_example(event):
+    bot.send_message(
+        chat_id=event.chat_id,
+        text="""
+&lt;b&gt;Bold text&lt;/b&gt;
+&lt;i&gt;Italic text&lt;/i&gt;
+&lt;u&gt;Underlined text&lt;/u&gt;
+&lt;s&gt;Strikethrough text&lt;/s&gt;
+&lt;code&gt;Monospace code&lt;/code&gt;
+&lt;pre&gt;Preformatted code block&lt;/pre&gt;
+&lt;a href="https://example.com"&gt;Link&lt;/a&gt;
+        """,
+        parse_mode="HTML"
+    )</code></pre>
+            
+            <h3>Markdown Example</h3>
+            <p>Complete Markdown formatting example:</p>
+            <pre><code>@bot.on("command:format")
+def format_example(event):
+    bot.send_message(
+        chat_id=event.chat_id,
+        text="""
+*Bold text*
+_Italic text_
+`Monospace code`
+[Link](https://example.com)
+        """,
+        parse_mode="Markdown"
+    )</code></pre>
+            
+            <div class="info">
+                <strong>Formatting Tips</strong><br>
+                HTML is generally recommended for its flexibility and better support for complex formatting. MarkdownV2 requires escaping special characters, which can be cumbersome. Use HTML for most cases, and Markdown only if you prefer its syntax.
+            </div>
+            
+            <h2 id="best-practices">Best Practices</h2>
+            
+            <h3>1. Use Event Fields for Common Tasks</h3>
+            <div class="success">
+                <strong>Good:</strong> Use convenience fields<br>
+                <pre><code>if event.chat_type == "private":
+    bot.send_message(chat_id=event.chat_id, text="Hey! I'm using shingram")</code></pre>
+            </div>
+            <div class="warning">
+                <strong>Avoid:</strong> Diving into raw for simple things<br>
+                <pre><code>if event.raw["message"]["chat"]["type"] == "private":
+    bot.send_message(chat_id=event.chat_id, text="Hey! I'm using shingram")</code></pre>
+            </div>
+            
+            <h3>2. Use event.raw for Advanced Data</h3>
+            <div class="success">
+                <strong>Good:</strong> Use raw for advanced features<br>
+                <pre><code>entities = event.raw["message"].get("entities", [])
+date = event.raw["message"]["date"]</code></pre>
+            </div>
+            <div class="warning">
+                <strong>Avoid:</strong> Trying to extract everything into Event<br>
+                Event is designed to have only common fields. Don't try to add every possible field - use <code>event.raw</code> for advanced data.
+            </div>
+            
+            <h3>3. Always Check Availability</h3>
+            <div class="success">
+                <strong>Good:</strong> Check if field exists<br>
+                <pre><code>if event.username:
+    print(f"User: @{event.username}")
+
+if event.reply_to:
+    print(f"Replied to: {event.reply_to}")</code></pre>
+            </div>
+            <div class="warning">
+                <strong>Avoid:</strong> Assuming fields always exist<br>
+                <pre><code>print(f"User: @{event.username}")  # Might be None!</code></pre>
+            </div>
+            
+            <h3>4. Filter by Chat Type</h3>
+            <div class="success">
+                <strong>Good:</strong> Use chat_type for filtering<br>
+                <pre><code>@bot.on("message")
+def handle_message(event):
+    if event.chat_type == "private":
+        # Private chat logic
+        pass
+    elif event.chat_type == "group":
+        # Group chat logic
+        pass</code></pre>
+            </div>
+            <div class="warning">
+                <strong>Avoid:</strong> Checking raw every time<br>
+                <pre><code>if event.raw["message"]["chat"]["type"] == "private":
+    pass</code></pre>
+            </div>
+            
+            <h3>5. Combine Event and Raw</h3>
+            <div class="success">
+                <strong>Good:</strong> Use both Event fields and raw<br>
+                <pre><code>@bot.on("message")
+def handle_message(event):
+    # Simple filtering with Event
+    if event.chat_type == "private":
+        # Advanced data from raw
+        user_info = event.raw["message"]["from"]
+        is_premium = user_info.get("is_premium", False)
+        
+        if is_premium:
+            bot.send_message(
+                chat_id=event.chat_id,
+                text="Hey! I'm using shingram"
+            )</code></pre>
+            </div>
+            
+            <h3>6. Error Handling</h3>
+            <p>Always handle potential errors when making API calls:</p>
+            <pre><code>from shingram import Bot, TelegramAPIError
+
+@bot.on("message")
+def handle_message(event):
+    try:
+        bot.send_message(chat_id=event.chat_id, text="Hey! I'm using shingram")
+    except TelegramAPIError as e:
+        print(f"Telegram API error: {e}")
+        print(f"Error code: {e.error_code}")
+        print(f"Description: {e.description}")
+    except Exception as e:
+        print(f"Unexpected error: {e}")</code></pre>
+            
+            <h2 id="summary">Summary</h2>
+            
+            <div class="info">
+                <h3>Event is Simple, Not Limited</h3>
+                <ul>
+                    <li><strong>Event has 14 fields</strong> (6 required + 8 optional)</li>
+                    <li><strong>Extracts only common fields</strong> for convenience</li>
+                    <li><strong>Everything else is in <code>event.raw</code></strong> - you never lose data</li>
+                    <li><strong>80% of use cases</strong> can use Event fields directly</li>
+                    <li><strong>20% advanced cases</strong> use <code>event.raw</code></li>
+                </ul>
+            </div>
+            
+            <div class="success">
+                <h3>You Never Struggle</h3>
+                <ul>
+                    <li>✅ <strong>Common tasks:</strong> Use Event fields (<code>event.chat_type</code>, <code>event.username</code>)</li>
+                    <li>✅ <strong>Advanced tasks:</strong> Use <code>event.raw</code> (entities, media, dates)</li>
+                    <li>✅ <strong>Always available:</strong> Complete JSON in <code>event.raw</code></li>
+                    <li>✅ <strong>Best of both:</strong> Simple when possible, powerful when needed</li>
+                </ul>
+            </div>
+            
+            <div class="highlight">
+                <h3>Markdown Support</h3>
+                <ul>
+                    <li>✅ HTML formatting: <code>parse_mode="HTML"</code></li>
+                    <li>✅ Markdown formatting: <code>parse_mode="Markdown"</code></li>
+                    <li>✅ MarkdownV2 formatting: <code>parse_mode="MarkdownV2"</code></li>
+                </ul>
+            </div>
+            
+            <div class="info" style="margin-top: 40px;">
+                <h3>Key Takeaways</h3>
+                <ul>
+                    <li>Shingram provides a simple, normalized Event object for easy development</li>
+                    <li>All Telegram API methods work automatically with Python naming conventions</li>
+                    <li>Full access to raw data ensures you never lose functionality</li>
+                    <li>The library is future-proof - new Telegram methods work immediately</li>
+                    <li>Use Event fields for common operations, raw data for advanced features</li>
+                </ul>
+            </div>
+            
+            <p style="margin-top: 48px; text-align: center; color: #768390; font-size: 14px; font-style: italic;">
+                <strong style="color: #58a6ff;">Shingram makes bot development simple, without sacrificing power!</strong>
+            </p>
+        </main>
+    </div>
+</body>
+</html>

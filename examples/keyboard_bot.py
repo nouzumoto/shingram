@@ -10,7 +10,7 @@ bot = Bot("YOUR_BOT_TOKEN")
 
 @bot.on("command:start")
 def handle_start(event):
-    # Custom reply keyboard
+    # Reply keyboard (shown under the input field)
     keyboard = {
         "keyboard": [
             [{"text": "Option 1"}, {"text": "Option 2"}],
@@ -19,7 +19,6 @@ def handle_start(event):
         "resize_keyboard": True,
         "one_time_keyboard": True
     }
-    
     bot.send_message(
         chat_id=event.chat_id,
         text="Hey! I'm using shingram\n\nChoose an option from the keyboard or use /buttons for inline buttons!",
@@ -28,7 +27,7 @@ def handle_start(event):
 
 @bot.on("command:buttons")
 def handle_buttons(event):
-    # Inline keyboard
+    # Inline keyboard (buttons attached to the message)
     keyboard = {
         "inline_keyboard": [
             [
@@ -49,13 +48,12 @@ def handle_buttons(event):
 
 @bot.on("callback")
 def handle_callback(event):
-    # Answer the callback query
+    # Tell Telegram we handled the button press (removes loading state)
     bot.answer_callback_query(
         callback_query_id=event.callback_query_id,
         text="Hey! I'm using shingram"
     )
-    
-    # Handle different button clicks
+    # event.text holds the callback_data of the pressed button
     if event.text == "btn1":
         bot.send_message(
             chat_id=event.chat_id,
@@ -74,7 +72,7 @@ def handle_callback(event):
 
 @bot.on("message")
 def handle_message(event):
-    # Handle keyboard button presses
+    # Reply keyboard sends the button label as message text
     if event.text in ["Option 1", "Option 2", "Option 3"]:
         bot.send_message(
             chat_id=event.chat_id,

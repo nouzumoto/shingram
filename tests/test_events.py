@@ -5,7 +5,6 @@ from shingram.events import Event, normalize
 
 
 def test_normalize_command():
-    """Test normalization of command updates."""
     update = {
         "update_id": 1,
         "message": {
@@ -27,7 +26,6 @@ def test_normalize_command():
 
 
 def test_normalize_command_with_botname():
-    """Test normalization of command with bot mention."""
     update = {
         "update_id": 1,
         "message": {
@@ -45,7 +43,6 @@ def test_normalize_command_with_botname():
 
 
 def test_normalize_message():
-    """Test normalization of regular message updates."""
     update = {
         "update_id": 1,
         "message": {
@@ -65,7 +62,6 @@ def test_normalize_message():
 
 
 def test_normalize_reply():
-    """Test normalization of reply messages."""
     update = {
         "update_id": 1,
         "message": {
@@ -89,7 +85,6 @@ def test_normalize_reply():
 
 
 def test_normalize_join():
-    """Test normalization of join events."""
     update = {
         "update_id": 1,
         "message": {
@@ -111,7 +106,6 @@ def test_normalize_join():
 
 
 def test_normalize_edited_message():
-    """Test normalization of edited message updates."""
     update = {
         "update_id": 1,
         "edited_message": {
@@ -131,8 +125,6 @@ def test_normalize_edited_message():
 
 
 def test_normalize_unsupported():
-    """Test that truly unsupported update types return None."""
-    # Use an update type that doesn't exist in Telegram API
     update = {
         "update_id": 1,
         "unknown_update_type": {

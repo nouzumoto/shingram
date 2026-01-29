@@ -2,21 +2,15 @@
 
 [![Channel](https://shields.io/badge/channel-subscribe-blue?logo=telegram&color=3faee8)](https://t.me/shingramnews)
 [![Documentation](https://img.shields.io/badge/docs-here-red)](https://nouzumoto.github.io/shingram/)
-
-A minimalist Python library for creating Telegram bots with zero hardcoding and automatic API method support.
-
-Shingram provides a lightweight wrapper for the Telegram Bot API, designed to be simple, powerful, and future-proof. The library automatically supports all Telegram API methods without requiring code updates when new methods are added.
+Minimal Python wrapper for the Telegram Bot API. One `Event` shape for all update types, one router for handlers; sync and async share the same core (normalize, router, error handling). New Telegram methods work without changing the library.
 
 ## Features
 
-- **Zero hardcoding**: All Telegram API methods work automatically without library updates
-- **Automatic conversion**: Python-style `snake_case` method names are automatically converted to Telegram's `camelCase` format
-- **Event normalization**: All Telegram updates are normalized into a consistent `Event` object format
-- **Complete update coverage**: Supports all Telegram Bot API update types
-- **Simple API**: Register handlers with decorators or direct method calls
-- **Automatic long polling**: Built-in offset management and error handling
-- **Full raw data access**: Complete access to original Telegram API data via `event.raw`
-- **Synchronous**: No async complexity - simple, linear code
+- **Zero hardcoding** — All Telegram API methods work without library updates. Call `bot.send_message(...)`, `bot.send_photo(...)`, or any method; names are converted from `snake_case` to `camelCase` automatically.
+- **Single Event type** — Every update (message, callback, inline, etc.) is normalized to one `Event`; the full payload stays in `event.raw`.
+- **Full update coverage** — Commands, messages, edits, channel posts, inline queries, callbacks, joins, polls, reactions, business, webhooks.
+- **Sync and async** — Use `bot.run()` with sync handlers or `bot.run_async()` with async handlers; same router and Event, shared core.
+- **Long polling** — Offset and timeouts handled. Optional `timeout`, `limit`, `allowed_updates`, and `on_error` on `run()` / `run_async()`. Webhook examples with Flask and FastAPI.
 
 ## Installation
 
@@ -46,9 +40,7 @@ def handle_message(event):
 bot.run()
 ```
 
-## Event Types
-
-Shingram normalizes all Telegram updates into consistent `Event` objects. Supported event types include:
+## Event types
 
 - **Commands**: `command:start`, `command:help`, etc. Use `command` to catch all commands
 - **Messages**: `message` for text messages
@@ -66,21 +58,19 @@ Shingram normalizes all Telegram updates into consistent `Event` objects. Suppor
 - **Shipping and payment**: `shipping_query`, `pre_checkout_query`
 - **Chosen inline results**: `chosen_inline_result`
 
-All events are normalized into the same `Event` format for consistency.
+Handlers always get the same `Event`; the field that varies is `type` (and `name` for commands/callbacks).
 
-## Event Object
-
-Every handler receives an `Event` object with the following fields:
+## Event fields
 
 ```python
 @dataclass
 class Event:
     type: str                    # Event type: "command", "message", "callback", etc.
-    name: str                   # Event name: "start" for commands, "" for others
-    chat_id: int                # Chat ID (0 if not applicable)
-    user_id: int                # User ID (0 if not applicable)
-    text: str                   # Message text or callback data
-    raw: dict                   # Complete raw data from Telegram API
+    name: str                    # Event name: "start" for commands, "" for others
+    chat_id: int                 # Chat ID (0 if not applicable)
+    user_id: int                 # User ID (0 if not applicable)
+    text: str                    # Message text or callback data
+    raw: dict                    # Complete raw data from Telegram API
     reply_to: Optional[int]      # ID of replied message (if present)
     chat_type: Optional[str]     # "private", "group", "supergroup", "channel"
     inline_query_id: Optional[str]    # For inline_query events
@@ -89,7 +79,33 @@ class Event:
     username: Optional[str]      # User username (if available)
     first_name: Optional[str]    # User first name (if available)
     chat_title: Optional[str]    # Chat title (for groups/channels)
+    last_name: Optional[str]     # User last name (if available)
+    language_code: Optional[str] # User language code (if available)
+    content_type: Optional[str]  # "text", "photo", "document", etc. (for messages)
 ```
+
+## Async
+
+Use `async def` handlers and start the bot with `bot.run_async()`. For API calls use `await bot.async_client.send_message(...)` (and the other methods on `bot.async_client`).
+
+```python
+from shingram import Bot
+
+bot = Bot("YOUR_BOT_TOKEN")
+
+@bot.on("command:start")
+async def handle_start(event):
+    await bot.async_client.send_message(chat_id=event.chat_id, text="Hello!")
+
+@bot.on("message")
+async def handle_message(event):
+    if event.text:
+        await bot.async_client.send_message(chat_id=event.chat_id, text=f"You said: {event.text}")
+
+bot.run_async()
+```
+
+You can pass optional polling options to `run()` and `run_async()`: `timeout` (default 30), `limit` (default 100), `allowed_updates` (list of update types, or `None` for all), and `on_error` (callback for polling-loop errors, e.g. `bot.run(on_error=logger.exception)`).
 
 ## Error Handling
 
@@ -106,12 +122,7 @@ except TelegramAPIError as e:
 
 ## Examples
 
-See the `examples/` directory for complete working examples:
-- `echo_bot.py` - Simple echo bot that repeats messages
-- `inline_bot.py` - Inline query bot with search functionality
-- `keyboard_bot.py` - Bot with custom keyboard and inline buttons
-- `webhook_flask.py` - Webhook example using Flask
-- `webhook_fastapi.py` - Webhook example using FastAPI
+See the **`examples/`** directory in the repo. You can find plenty of examples there: **sync** (e.g. `echo_bot.py`, `inline_bot.py`, `keyboard_bot.py`, `webhook_flask.py`, `webhook_fastapi.py`) and **async** (e.g. `echo_bot_async.py`, `inline_bot_async.py`, `keyboard_bot_async.py`). Set your bot token in the file and run it.
 
 ## License
 

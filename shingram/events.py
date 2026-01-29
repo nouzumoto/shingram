@@ -1,12 +1,19 @@
-"""Event normalization from Telegram updates."""
+"""Turn raw Telegram updates into Event; used by both sync and async runtimes."""
 
 from dataclasses import dataclass
 from typing import Optional
 
 
+def _message_content_type(message: dict) -> str:
+    for key in ("photo", "document", "voice", "video_note", "video", "audio", "sticker", "animation", "location", "contact"):
+        if key in message:
+            return key
+    return "text" if message.get("text") is not None else "text"
+
+
 @dataclass
 class Event:
-    """Normalized event from Telegram update."""
+    """Single shape for all update types; raw payload stays in .raw."""
     type: str
     name: str
     chat_id: int
@@ -21,17 +28,13 @@ class Event:
     username: Optional[str] = None  # User username (if available)
     first_name: Optional[str] = None  # User first name (if available)
     chat_title: Optional[str] = None  # Chat title (for groups/channels)
+    last_name: Optional[str] = None  # User last name (if available)
+    language_code: Optional[str] = None  # User language code (if available)
+    content_type: Optional[str] = None  # "text", "photo", "document", etc. for messages
 
 
 def normalize(update_json: dict) -> Optional[Event]:
-    """Normalize a Telegram update into an Event.
-    
-    Args:
-        update_json: Raw update JSON from Telegram
-        
-    Returns:
-        Event object or None if update type is not supported
-    """
+    """Build one Event from a getUpdates/item or webhook payload; None if unknown type."""
     # Handle message updates
     if "message" in update_json:
         message = update_json["message"]
@@ -50,6 +53,8 @@ def normalize(update_json: dict) -> Optional[Event]:
                 chat_title = message.get("chat", {}).get("title")
                 username = member.get("username")
                 first_name = member.get("first_name")
+                last_name = member.get("last_name")
+                language_code = member.get("language_code")
                 return Event(
                     type="join",
                     name="",
@@ -62,7 +67,9 @@ def normalize(update_json: dict) -> Optional[Event]:
                     message_id=message.get("message_id"),
                     username=username,
                     first_name=first_name,
-                    chat_title=chat_title
+                    chat_title=chat_title,
+                    last_name=last_name,
+                    language_code=language_code,
                 )
         
         if "left_chat_member" in message:
@@ -76,6 +83,8 @@ def normalize(update_json: dict) -> Optional[Event]:
             chat_title = message.get("chat", {}).get("title")
             username = left_member.get("username")
             first_name = left_member.get("first_name")
+            last_name = left_member.get("last_name")
+            language_code = left_member.get("language_code")
             return Event(
                 type="leave",
                 name="",
@@ -88,7 +97,9 @@ def normalize(update_json: dict) -> Optional[Event]:
                 message_id=message.get("message_id"),
                 username=username,
                 first_name=first_name,
-                chat_title=chat_title
+                chat_title=chat_title,
+                last_name=last_name,
+                language_code=language_code,
             )
         
         # Handle regular messages and commands
@@ -100,6 +111,9 @@ def normalize(update_json: dict) -> Optional[Event]:
         message_id = message.get("message_id")
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
+        content_type = _message_content_type(message)
         
         if chat_id is None or user_id is None:
             return None
@@ -119,7 +133,10 @@ def normalize(update_json: dict) -> Optional[Event]:
                 message_id=message_id,
                 username=username,
                 first_name=first_name,
-                chat_title=chat_title
+                chat_title=chat_title,
+                last_name=last_name,
+                language_code=language_code,
+                content_type=content_type,
             )
         
         return Event(
@@ -134,7 +151,10 @@ def normalize(update_json: dict) -> Optional[Event]:
             message_id=message_id,
             username=username,
             first_name=first_name,
-            chat_title=chat_title
+            chat_title=chat_title,
+            last_name=last_name,
+            language_code=language_code,
+            content_type=content_type,
         )
     
     if "callback_query" in update_json:
@@ -149,6 +169,8 @@ def normalize(update_json: dict) -> Optional[Event]:
         chat_title = message.get("chat", {}).get("title") if message else None
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
         
         if chat_id is None or user_id is None:
             return None
@@ -166,7 +188,9 @@ def normalize(update_json: dict) -> Optional[Event]:
             message_id=message.get("message_id") if message else None,
             username=username,
             first_name=first_name,
-            chat_title=chat_title
+            chat_title=chat_title,
+            last_name=last_name,
+            language_code=language_code,
         )
     
     if "inline_query" in update_json:
@@ -177,6 +201,8 @@ def normalize(update_json: dict) -> Optional[Event]:
         inline_query_id = inline.get("id")
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
         
         if user_id is None:
             return None
@@ -191,7 +217,9 @@ def normalize(update_json: dict) -> Optional[Event]:
             reply_to=None,
             inline_query_id=inline_query_id,
             username=username,
-            first_name=first_name
+            first_name=first_name,
+            last_name=last_name,
+            language_code=language_code,
         )
     
     if "edited_message" in update_json:
@@ -205,6 +233,9 @@ def normalize(update_json: dict) -> Optional[Event]:
         message_id = message.get("message_id")
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
+        content_type = _message_content_type(message)
         
         if chat_id is None or user_id is None:
             return None
@@ -221,7 +252,10 @@ def normalize(update_json: dict) -> Optional[Event]:
             message_id=message_id,
             username=username,
             first_name=first_name,
-            chat_title=chat_title
+            chat_title=chat_title,
+            last_name=last_name,
+            language_code=language_code,
+            content_type=content_type,
         )
     
     if "channel_post" in update_json:
@@ -231,6 +265,7 @@ def normalize(update_json: dict) -> Optional[Event]:
         chat_type = message.get("chat", {}).get("type")
         chat_title = message.get("chat", {}).get("title")
         message_id = message.get("message_id")
+        content_type = _message_content_type(message)
         
         if chat_id is None:
             return None
@@ -248,7 +283,8 @@ def normalize(update_json: dict) -> Optional[Event]:
                 reply_to=message.get("reply_to_message", {}).get("message_id"),
                 chat_type=chat_type,
                 message_id=message_id,
-                chat_title=chat_title
+                chat_title=chat_title,
+                content_type=content_type,
             )
         
         return Event(
@@ -261,7 +297,8 @@ def normalize(update_json: dict) -> Optional[Event]:
             reply_to=message.get("reply_to_message", {}).get("message_id"),
             chat_type=chat_type,
             message_id=message_id,
-            chat_title=chat_title
+            chat_title=chat_title,
+            content_type=content_type,
         )
     
     if "poll_answer" in update_json:
@@ -270,6 +307,8 @@ def normalize(update_json: dict) -> Optional[Event]:
         user_id = user.get("id") if user else None
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
         
         if user_id is None:
             return None
@@ -283,7 +322,9 @@ def normalize(update_json: dict) -> Optional[Event]:
             raw=update_json,
             reply_to=None,
             username=username,
-            first_name=first_name
+            first_name=first_name,
+            last_name=last_name,
+            language_code=language_code,
         )
     
     if "edited_channel_post" in update_json:
@@ -293,6 +334,7 @@ def normalize(update_json: dict) -> Optional[Event]:
         chat_type = message.get("chat", {}).get("type")
         chat_title = message.get("chat", {}).get("title")
         message_id = message.get("message_id")
+        content_type = _message_content_type(message)
         
         if chat_id is None:
             return None
@@ -310,7 +352,8 @@ def normalize(update_json: dict) -> Optional[Event]:
                 reply_to=message.get("reply_to_message", {}).get("message_id"),
                 chat_type=chat_type,
                 message_id=message_id,
-                chat_title=chat_title
+                chat_title=chat_title,
+                content_type=content_type,
             )
         
         return Event(
@@ -323,7 +366,8 @@ def normalize(update_json: dict) -> Optional[Event]:
             reply_to=message.get("reply_to_message", {}).get("message_id"),
             chat_type=chat_type,
             message_id=message_id,
-            chat_title=chat_title
+            chat_title=chat_title,
+            content_type=content_type,
         )
     
     if "chosen_inline_result" in update_json:
@@ -334,6 +378,8 @@ def normalize(update_json: dict) -> Optional[Event]:
         query = chosen.get("query", "")
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
         
         if user_id is None:
             return None
@@ -347,7 +393,9 @@ def normalize(update_json: dict) -> Optional[Event]:
             raw=update_json,
             reply_to=None,
             username=username,
-            first_name=first_name
+            first_name=first_name,
+            last_name=last_name,
+            language_code=language_code,
         )
     
     if "shipping_query" in update_json:
@@ -357,6 +405,8 @@ def normalize(update_json: dict) -> Optional[Event]:
         query_id = shipping.get("id", "")
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
         
         if user_id is None:
             return None
@@ -370,7 +420,9 @@ def normalize(update_json: dict) -> Optional[Event]:
             raw=update_json,
             reply_to=None,
             username=username,
-            first_name=first_name
+            first_name=first_name,
+            last_name=last_name,
+            language_code=language_code,
         )
     
     if "pre_checkout_query" in update_json:
@@ -380,6 +432,8 @@ def normalize(update_json: dict) -> Optional[Event]:
         query_id = checkout.get("id", "")
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
         
         if user_id is None:
             return None
@@ -393,7 +447,9 @@ def normalize(update_json: dict) -> Optional[Event]:
             raw=update_json,
             reply_to=None,
             username=username,
-            first_name=first_name
+            first_name=first_name,
+            last_name=last_name,
+            language_code=language_code,
         )
     
     if "chat_member" in update_json:
@@ -406,6 +462,8 @@ def normalize(update_json: dict) -> Optional[Event]:
         chat_title = chat.get("title")
         username = member.get("username") if member else None
         first_name = member.get("first_name") if member else None
+        last_name = member.get("last_name") if member else None
+        language_code = member.get("language_code") if member else None
         
         if chat_id is None or user_id is None:
             return None
@@ -423,7 +481,9 @@ def normalize(update_json: dict) -> Optional[Event]:
             chat_type=chat_type,
             username=username,
             first_name=first_name,
-            chat_title=chat_title
+            chat_title=chat_title,
+            last_name=last_name,
+            language_code=language_code,
         )
     
     if "my_chat_member" in update_json:
@@ -436,6 +496,8 @@ def normalize(update_json: dict) -> Optional[Event]:
         chat_title = chat.get("title")
         username = member.get("username") if member else None
         first_name = member.get("first_name") if member else None
+        last_name = member.get("last_name") if member else None
+        language_code = member.get("language_code") if member else None
         
         if chat_id is None or user_id is None:
             return None
@@ -453,7 +515,9 @@ def normalize(update_json: dict) -> Optional[Event]:
             chat_type=chat_type,
             username=username,
             first_name=first_name,
-            chat_title=chat_title
+            chat_title=chat_title,
+            last_name=last_name,
+            language_code=language_code,
         )
     
     if "chat_join_request" in update_json:
@@ -466,6 +530,8 @@ def normalize(update_json: dict) -> Optional[Event]:
         chat_title = chat.get("title")
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
         
         if chat_id is None or user_id is None:
             return None
@@ -481,7 +547,9 @@ def normalize(update_json: dict) -> Optional[Event]:
             chat_type=chat_type,
             username=username,
             first_name=first_name,
-            chat_title=chat_title
+            chat_title=chat_title,
+            last_name=last_name,
+            language_code=language_code,
         )
     
     if "business_connection" in update_json:
@@ -490,6 +558,8 @@ def normalize(update_json: dict) -> Optional[Event]:
         user_id = user.get("id") if user else None
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
         
         if user_id is None:
             return None
@@ -503,7 +573,9 @@ def normalize(update_json: dict) -> Optional[Event]:
             raw=update_json,
             reply_to=None,
             username=username,
-            first_name=first_name
+            first_name=first_name,
+            last_name=last_name,
+            language_code=language_code,
         )
     
     if "business_message" in update_json:
@@ -517,6 +589,9 @@ def normalize(update_json: dict) -> Optional[Event]:
         message_id = message.get("message_id")
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
+        content_type = _message_content_type(message)
         
         if chat_id is None or user_id is None:
             return None
@@ -536,7 +611,10 @@ def normalize(update_json: dict) -> Optional[Event]:
                 message_id=message_id,
                 username=username,
                 first_name=first_name,
-                chat_title=chat_title
+                chat_title=chat_title,
+                last_name=last_name,
+                language_code=language_code,
+                content_type=content_type,
             )
         
         return Event(
@@ -551,7 +629,10 @@ def normalize(update_json: dict) -> Optional[Event]:
             message_id=message_id,
             username=username,
             first_name=first_name,
-            chat_title=chat_title
+            chat_title=chat_title,
+            last_name=last_name,
+            language_code=language_code,
+            content_type=content_type,
         )
     
     if "edited_business_message" in update_json:
@@ -565,6 +646,9 @@ def normalize(update_json: dict) -> Optional[Event]:
         message_id = message.get("message_id")
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
+        content_type = _message_content_type(message)
         
         if chat_id is None or user_id is None:
             return None
@@ -581,7 +665,10 @@ def normalize(update_json: dict) -> Optional[Event]:
             message_id=message_id,
             username=username,
             first_name=first_name,
-            chat_title=chat_title
+            chat_title=chat_title,
+            last_name=last_name,
+            language_code=language_code,
+            content_type=content_type,
         )
     
     if "deleted_business_messages" in update_json:
@@ -617,6 +704,8 @@ def normalize(update_json: dict) -> Optional[Event]:
         chat_title = chat.get("title")
         username = user.get("username") if user else None
         first_name = user.get("first_name") if user else None
+        last_name = user.get("last_name") if user else None
+        language_code = user.get("language_code") if user else None
         
         if chat_id is None or user_id is None:
             return None
@@ -633,7 +722,9 @@ def normalize(update_json: dict) -> Optional[Event]:
             message_id=message_id,
             username=username,
             first_name=first_name,
-            chat_title=chat_title
+            chat_title=chat_title,
+            last_name=last_name,
+            language_code=language_code,
         )
     
     if "message_reaction_count" in update_json:

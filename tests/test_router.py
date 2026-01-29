@@ -1,12 +1,12 @@
-"""Tests for router."""
+"""Tests for router (sync and async dispatch)."""
 
+import asyncio
 import pytest
 from shingram.router import Router
 from shingram.events import Event
 
 
 def test_register_handler():
-    """Test handler registration."""
     router = Router()
     called = []
     
@@ -19,7 +19,6 @@ def test_register_handler():
 
 
 def test_register_decorator():
-    """Test handler registration as decorator."""
     router = Router()
     called = []
     
@@ -32,7 +31,6 @@ def test_register_decorator():
 
 
 def test_dispatch_specific():
-    """Test dispatching to specific handler."""
     router = Router()
     called = []
     
@@ -56,7 +54,6 @@ def test_dispatch_specific():
 
 
 def test_dispatch_type():
-    """Test dispatching to type handler."""
     router = Router()
     called = []
     
@@ -80,7 +77,6 @@ def test_dispatch_type():
 
 
 def test_dispatch_multiple_handlers():
-    """Test dispatching to multiple handlers."""
     router = Router()
     called = []
     
@@ -109,17 +105,24 @@ def test_dispatch_multiple_handlers():
 
 
 def test_dispatch_no_handler():
-    """Test dispatching when no handler is registered."""
     router = Router()
-    
-    event = Event(
-        type="unknown",
-        name="",
-        chat_id=123,
-        user_id=456,
-        text="",
-        raw={}
-    )
-    
-    # Should not raise an error
+    event = Event(type="unknown", name="", chat_id=123, user_id=456, text="", raw={})
     router.dispatch(event)
+
+
+def test_dispatch_async():
+    router = Router()
+    called = []
+
+    async def handler(event):
+        called.append(event)
+
+    router.on("command:start", handler)
+    event = Event(type="command", name="start", chat_id=123, user_id=456, text="/start", raw={})
+
+    async def run():
+        await router.dispatch_async(event)
+
+    asyncio.run(run())
+    assert len(called) == 1
+    assert called[0] == event

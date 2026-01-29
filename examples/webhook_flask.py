@@ -9,8 +9,7 @@ from flask import Flask, request
 
 bot = Bot("YOUR_BOT_TOKEN")
 app = Flask(__name__)
-
-# Create webhook handler
+# Handler receives (body, headers); call it from your webhook route
 handler = bot.create_webhook_handler(secret_token="your_secret")
 
 @bot.on("command:start")
@@ -33,8 +32,6 @@ def webhook():
     return 'OK'
 
 if __name__ == "__main__":
-    # Configure webhook (call once)
+    # Point Telegram to this URL (do once, or after changing URL)
     bot.set_webhook(url="https://yourdomain.com/webhook", secret_token="your_secret")
-    
-    # Run Flask app
     app.run(host='0.0.0.0', port=5000)

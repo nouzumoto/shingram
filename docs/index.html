@@ -369,6 +369,7 @@
                 <li><a href="#introduction">Introduction</a></li>
                 <li><a href="#installation">Installation</a></li>
                 <li><a href="#quick-start">Quick Start</a></li>
+                <li><a href="#using-async">Using async</a></li>
                 <li><a href="#event-object">Event Object</a></li>
                 <li><a href="#using-event-fields">Using Event Fields</a></li>
                 <li><a href="#using-event-raw">Using event.raw</a></li>
@@ -385,24 +386,11 @@
             <h1>Shingram Documentation</h1>
             
             <h2 id="introduction">Introduction</h2>
-            <p>Shingram is a minimalist Python library for creating Telegram bots. It's designed to be:</p>
-            <ul>
-                <li><strong style="color: #ffffff;">Simple</strong>: Easy to understand and use</li>
-                <li><strong style="color: #ffffff;">Powerful</strong>: Supports all Telegram features</li>
-                <li><strong style="color: #ffffff;">Future-proof</strong>: Works with new Telegram methods automatically</li>
-                <li><strong style="color: #ffffff;">Lightweight</strong>: ~300 lines of core code</li>
-            </ul>
-            
-            <p>Shingram provides a clean, simple API that abstracts away the complexity of the Telegram Bot API while maintaining full access to all features through the raw data access pattern.</p>
+            <p>Shingram is a thin wrapper around the Telegram Bot API: one <code>Event</code> for all update types, one router for handlers. Sync and async share the same core (normalize, router, error handling). New API methods work without library changes.</p>
             
             <h2 id="installation">Installation</h2>
             <p>Install Shingram using pip:</p>
             <pre><code>pip install shingram</code></pre>
-            
-            <div class="info">
-                <strong>Note</strong><br>
-                Shingram requires Python 3.7+ and httpx for HTTP requests. The library uses only standard library dependencies plus httpx, keeping it lightweight and easy to install. All dependencies are automatically installed when you install shingram.
-            </div>
             
             <h2 id="quick-start">Quick Start</h2>
             <p>Minimal example:</p>
@@ -425,12 +413,28 @@ bot.run()</code></pre>
                 <li>Start the bot with <code>bot.run()</code></li>
             </ol>
             
+            <h2 id="using-async">Using async</h2>
+            <p>Use <code>async def</code> handlers and start the bot with <code>bot.run_async()</code>. For API calls use <code>await bot.async_client.send_message(...)</code> (and the other methods on <code>bot.async_client</code>).</p>
+            <pre><code>from shingram import Bot
+
+bot = Bot("YOUR_BOT_TOKEN")
+
+@bot.on("command:start")
+async def handle_start(event):
+    await bot.async_client.send_message(chat_id=event.chat_id, text="Hello!")
+
+@bot.on("message")
+async def handle_message(event):
+    if event.text:
+        await bot.async_client.send_message(chat_id=event.chat_id, text=f"You said: {event.text}")
+
+bot.run_async()</code></pre>
+            <p><code>run()</code> and <code>run_async()</code> accept optional <code>timeout</code> (default 30), <code>limit</code> (default 100), <code>allowed_updates</code> (list of update types, or <code>None</code> for all), and <code>on_error</code> (callback for polling-loop errors, e.g. <code>bot.run(on_error=logger.exception)</code>).</p>
+            
             <h2 id="event-object">Event Object Explained</h2>
             
             <h3>What is Event?</h3>
-            <p>The <code>Event</code> object is a normalized representation of any Telegram update. Instead of dealing with different structures for <code>message</code>, <code>callback_query</code>, <code>inline_query</code>, etc., you always receive the same simple <code>Event</code> format.</p>
-            
-            <p>Normalization enables consistent handlers across update types while maintaining full access to original Telegram data.</p>
+            <p>Every update (message, callback, inline, etc.) is turned into the same <code>Event</code> shape. You get a single type to handle; the original JSON is still in <code>event.raw</code>.</p>
             
             <h3>Event Structure</h3>
             <p>The <code>Event</code> dataclass contains the following fields:</p>
@@ -452,16 +456,14 @@ class Event:
     message_id: Optional[int]    # Message ID (when available)
     username: Optional[str]      # User username (when available)
     first_name: Optional[str]    # User first name (when available)
-    chat_title: Optional[str]    # Chat title (for groups/channels)</code></pre>
+    chat_title: Optional[str]    # Chat title (for groups/channels)
+    last_name: Optional[str]     # User last name (when available)
+    language_code: Optional[str] # User language code (when available)
+    content_type: Optional[str]  # "text", "photo", "document", etc. (for messages)</code></pre>
             
             <div class="info">
-                <strong>Why Event is Simple</strong><br>
-                Event has only <strong>14 fields</strong> (6 required + 8 optional), while Telegram's JSON can have <strong>hundreds of fields</strong>. Event extracts only the <strong>most commonly used fields</strong> for convenience. Everything else is always available in <code>event.raw</code>.
-            </div>
-            
-            <div class="success">
-                <strong>You Never Lose Data</strong><br>
-                <code>event.raw</code> contains the complete Telegram update JSON. You can always access any field from the original Telegram API response, ensuring you never lose functionality or data.
+                <strong>event.raw</strong><br>
+                The full Telegram update is in <code>event.raw</code>; use it when you need fields that aren’t on <code>Event</code>.
             </div>
             
             <h3>Event Fields Explained</h3>
@@ -486,6 +488,9 @@ class Event:
                 <li><code>username</code>: The username of the user who triggered the event, if available.</li>
                 <li><code>first_name</code>: The first name of the user who triggered the event, if available.</li>
                 <li><code>chat_title</code>: The title or name of the group or channel, if applicable.</li>
+                <li><code>last_name</code>: The last name of the user, if available.</li>
+                <li><code>language_code</code>: The user's language code, if available.</li>
+                <li><code>content_type</code>: For messages, the content type ("text", "photo", "document", etc.).</li>
             </ul>
             
             <h2 id="using-event-fields">Using Event Fields</h2>
@@ -916,6 +921,7 @@ bot.on("command:start", handle_start)</code></pre>
             </div>
             
             <h2 id="examples">Examples</h2>
+            <p>You can find plenty of examples in the <code>examples/</code> directory: <strong>sync</strong> (e.g. <code>echo_bot.py</code>, <code>inline_bot.py</code>, <code>keyboard_bot.py</code>, <code>webhook_flask.py</code>, <code>webhook_fastapi.py</code>) and <strong>async</strong> (e.g. <code>echo_bot_async.py</code>, <code>inline_bot_async.py</code>, <code>keyboard_bot_async.py</code>). Set your bot token in the file and run it.</p>
             
             <h3>Example 1: Simple Echo Bot</h3>
             <p>A basic bot that echoes back whatever the user sends:</p>

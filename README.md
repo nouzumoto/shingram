@@ -1,10 +1,11 @@
 # Shingram
 
+[![Channel](https://shields.io/badge/channel-subscribe-blue?logo=telegram&color=3faee8)](https://t.me/shingramnews)
+[![Documentation](https://img.shields.io/badge/docs-here-red)](https://nouzumoto.github.io/shingram/)
+
 A minimalist Python library for creating Telegram bots with zero hardcoding and automatic API method support.
 
 Shingram provides a lightweight wrapper for the Telegram Bot API, designed to be simple, powerful, and future-proof. The library automatically supports all Telegram API methods without requiring code updates when new methods are added.
-
-📖 **[Documentation](https://nouzumoto.github.io/shingram/)**
 
 ## Features
 
@@ -113,5 +114,6 @@ See the `examples/` directory for complete working examples:
 - `webhook_fastapi.py` - Webhook example using FastAPI
 
 ## License
+
 
 MIT License - see `LICENSE` for details.

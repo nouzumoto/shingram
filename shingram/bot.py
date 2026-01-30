@@ -77,5 +77,26 @@ class Bot:
             self._webhook_server = WebhookServer(self.router, secret_token)
         return self._webhook_server.handle_update(update_json, headers)
 
+    def close(self):
+        """Close the sync HTTP client."""
+        self.client.close()
+
+    async def close_async(self):
+        """Close both sync and async HTTP clients."""
+        self.client.close()
+        await self.async_client.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        await self.close_async()
+
     def __getattr__(self, name: str):
         return getattr(self.client, name)

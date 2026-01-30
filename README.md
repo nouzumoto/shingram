@@ -2,15 +2,15 @@
 
 [![Channel](https://shields.io/badge/channel-subscribe-blue?logo=telegram&color=3faee8)](https://t.me/shingramnews)
 [![Documentation](https://img.shields.io/badge/docs-here-red)](https://nouzumoto.github.io/shingram/)
-Minimal Python wrapper for the Telegram Bot API. One `Event` shape for all update types, one router for handlers; sync and async share the same core (normalize, router, error handling). New Telegram methods work without changing the library.
 
-## Features
+Minimal Python wrapper for the Telegram Bot API. **Future-proof**: new API methods work without library updates. **Dual mode**: same code works sync or async. All updates normalized to a single [`Event`](#event-fields) object — no dozens of classes to learn.
 
-- **Zero hardcoding** — All Telegram API methods work without library updates. Call `bot.send_message(...)`, `bot.send_photo(...)`, or any method; names are converted from `snake_case` to `camelCase` automatically.
-- **Single Event type** — Every update (message, callback, inline, etc.) is normalized to one `Event`; the full payload stays in `event.raw`.
-- **Full update coverage** — Commands, messages, edits, channel posts, inline queries, callbacks, joins, polls, reactions, business, webhooks.
-- **Sync and async** — Use `bot.run()` with sync handlers or `bot.run_async()` with async handlers; same router and Event, shared core.
-- **Long polling** — Offset and timeouts handled. Optional `timeout`, `limit`, `allowed_updates`, and `on_error` on `run()` / `run_async()`. Webhook examples with Flask and FastAPI.
+### Features
+
+- **Zero hardcoding** — Call any Telegram method; new API features work immediately
+- **One Event type** — Every update (message, callback, inline, etc.) has the same shape
+- **Sync & Async** — Use `bot.run()` or `bot.run_async()` with the same handlers
+- **~1,200 lines** — Lightweight, readable, easy to contribute
 
 ## Installation
 
@@ -20,7 +20,7 @@ pip install shingram
 
 ## Documentation
 
-Full documentation is available at: **[https://nouzumoto.github.io/shingram/](https://nouzumoto.github.io/shingram/)**
+Full documentation: **[nouzumoto.github.io/shingram](https://nouzumoto.github.io/shingram/)**
 
 ## Quick Start
 
